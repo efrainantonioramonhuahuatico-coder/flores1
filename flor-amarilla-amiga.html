@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tu flor amarilla oficial 🌼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --yellow:#FFC93C;
+    --orange:#FF8C42;
+    --pink:#FFD6E8;
+    --teal:#06AED5;
+    --ink:#3a2c12;
+    --cream:#FFFBF0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth; scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
+  body{
+    margin:0; min-height:100%;
+    background:linear-gradient(180deg,var(--cream),#FFF6DD 40%,var(--cream));
+    color:var(--ink); font-family:'Quicksand',sans-serif;
+    overflow-x:hidden;
+  }
+  h1,h2,.display{ font-family:'Baloo 2',cursive; }
+  section{ min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:6vh 6vw; text-align:center; position:relative; z-index:2;}
+
+  #confettiLayer{ position:fixed; inset:0; pointer-events:none; z-index:5; overflow:hidden;}
+  .confetto{ position:absolute; top:-30px; will-change:transform; }
+  @keyframes confFall{ to{ transform:translateY(110vh) translateX(var(--dx)) rotate(var(--rot)); } }
+
+  #floatLayer{ position:fixed; inset:0; pointer-events:none; z-index:1;}
+  .floater{ position:absolute; opacity:.5; animation: bob 6s ease-in-out infinite; }
+  @keyframes bob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-18px) rotate(6deg);} }
+
+  /* ---- INTRO ---- */
+  #intro{ background:radial-gradient(circle at 50% 30%, #3a2c12, #1c140a 75%); color:var(--cream); }
+  #intro h1{ font-size:clamp(1.5rem,5vw,2.4rem); max-width:20ch; line-height:1.3; color:var(--yellow); }
+  #intro .btn{ margin-top:2rem; }
+  .btn{
+    border:none; background:var(--orange); color:#fff; font-family:'Baloo 2',cursive; font-weight:700;
+    padding:1rem 2rem; font-size:1.05rem; border-radius:50px; cursor:pointer;
+    box-shadow:0 6px 0 #c65f1f; transition:transform .15s, box-shadow .15s;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 2px 0 #c65f1f; }
+
+  /* ---- COUNTDOWN ---- */
+  #count3{ display:none; }
+  #count3 .num{ font-size:6rem; font-family:'Baloo 2',cursive; color:var(--yellow); }
+
+  /* ---- REVEAL ---- */
+  #reveal{ display:none; }
+  #reveal h1{ font-size:clamp(1.6rem,5vw,2.6rem); color:var(--orange); }
+  #reveal p{ font-size:1.1rem; max-width:34ch; }
+  #reveal .flower{ font-size:4rem; }
+
+  /* ---- CARDS ---- */
+  #cards{ gap:1.6rem; }
+  #cards h2{ color:var(--orange); font-size:clamp(1.6rem,4.5vw,2.2rem); }
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; max-width:640px; width:100%; }
+  .card{
+    background:#fff; border:3px solid var(--yellow); border-radius:18px; padding:1.2rem;
+    cursor:pointer; font-weight:600; box-shadow:0 6px 0 rgba(0,0,0,.05); transition:transform .15s;
+  }
+  .card:hover{ transform:translateY(-4px); }
+  .card .result{ display:block; margin-top:.6rem; font-weight:500; color:var(--teal); min-height:1.4em; }
+
+  /* ---- GARDEN ---- */
+  #garden2{ gap:1.4rem; }
+  #garden2 h2{ color:var(--orange); }
+  .g2-grid{ display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; max-width:640px; }
+  .g2-flower{ font-size:2.2rem; opacity:0; transform:scale(0) rotate(30deg); transition:transform .7s cubic-bezier(.2,1.5,.4,1), opacity .7s; }
+  .g2-flower.bloom{ opacity:1; transform:scale(1) rotate(0); }
+
+  /* ---- LETTER ---- */
+  #letter2{ max-width:600px; gap:1.2rem; }
+  #letter2 h2{ color:var(--orange); }
+  #letter2 p{ font-size:1.1rem; line-height:1.85; text-align:left; min-height:8em; }
+  .cursor{ display:inline-block; width:2px; background:var(--ink); animation:blink 1s step-end infinite; margin-left:2px; }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ---- FINAL ---- */
+  #final2{ gap:1.2rem; }
+  #final2 .giant{ font-size:6rem; }
+  #final2 h2{ color:var(--orange); }
+
+  /* ---- PLAYER ---- */
+  #player{
+    position:fixed; bottom:0; left:0; right:0; z-index:20;
+    display:flex; align-items:center; gap:.7rem;
+    padding:.7rem 1rem calc(.7rem + env(safe-area-inset-bottom,0px)) 1rem;
+    background:#fff; border-top:3px solid var(--yellow);
+    transform:translateY(100%); transition:transform .5s; font-size:.85rem;
+  }
+  #player.show{ transform:translateY(0); }
+  #player button{ background:var(--orange); border:none; color:#fff; border-radius:50%; width:34px; height:34px; cursor:pointer; flex:none; }
+  #player input[type=range]{ accent-color:var(--orange); flex:1; max-width:100px; }
+  #player .track-label{ flex:1; color:#8a6b3a; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  #player label.upload{ border:2px solid var(--yellow); padding:.35rem .6rem; border-radius:8px; cursor:pointer; flex:none;}
+  #player input[type=file]{ display:none; }
+</style>
+</head>
+<body>
+
+<div id="floatLayer"></div>
+<div id="confettiLayer"></div>
+
+<!-- ============ INTRO ============ -->
+<section id="intro">
+  <h1 class="display">⚠️ ATENCIÓN ⚠️<br>HAS SIDO SELECCIONADA PARA RECIBIR ALGO MUY IMPORTANTE...</h1>
+  <button class="btn" id="startBtn">Descubrir mi destino 🌻</button>
+</section>
+
+<!-- ============ COUNTDOWN ============ -->
+<section id="count3">
+  <div class="num" id="countNum">3</div>
+</section>
+
+<!-- ============ REVEAL ============ -->
+<section id="reveal">
+  <div class="flower">🌼</div>
+  <h1 class="display" id="revealMsg">FELICIDADES, has desbloqueado una flor amarilla. No se puede devolver. 😂🌼</h1>
+  <p id="revealMsg2" style="display:none;">Ya hablando en serio... te mereces algo bonito. 💛</p>
+  <button class="btn" id="toCards" style="display:none; margin-top:1rem;">Ver más →</button>
+</section>
+
+<!-- ============ CARDS ============ -->
+<section id="cards">
+  <h2 class="display">Certificados oficiales</h2>
+  <div class="card-grid">
+    <div class="card" data-result="Confirmado. Científicamente sospechoso.">Nivel de amistad: sospechosamente alto 🤨</div>
+    <div class="card" data-result="Válido en todo el territorio nacional 🏅">Certificado de amiga que aguanta mis tonterías 🏆</div>
+    <div class="card" data-result="Calculando... 87% y subiendo 📈">Probabilidad de que te invite algo 😂</div>
+    <div class="card" data-result="Pero aquí tienes tu flor de todos modos 🌻">No soy poeta, pero...</div>
+  </div>
+</section>
+
+<!-- ============ GARDEN ============ -->
+<section id="garden2">
+  <h2 class="display">Tu jardín amarillo</h2>
+  <div class="g2-grid" id="g2Grid"></div>
+</section>
+
+<!-- ============ LETTER ============ -->
+<section id="letter2">
+  <h2 class="display">Una cosa más...</h2>
+  <p id="letterText"></p>
+</section>
+
+<!-- ============ FINAL ============ -->
+<section id="final2">
+  <div class="giant">🌼🌼🌼</div>
+  <h2 class="display">Feliz Día de las Flores Amarillas</h2>
+  <p>Gracias por las risas y los buenos momentos. 💛</p>
+</section>
+
+<!-- ============ PLAYER ============ -->
+<div id="player">
+  <button id="playPause">▶</button>
+  <span class="track-label" id="trackLabel">Sin canción — añade tu MP3</span>
+  <label class="upload">🎵<input type="file" id="audioFile" accept="audio/*"></label>
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="0.6">
+  <audio id="audio" loop></audio>
+</div>
+
+<script>
+/* ---------------- Floaters ---------------- */
+const floatLayer = document.getElementById('floatLayer');
+const emojis=['🌼','🌻','✨'];
+for(let i=0;i<16;i++){
+  const el=document.createElement('div');
+  el.className='floater';
+  el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  el.style.left=Math.random()*100+'vw';
+  el.style.top=Math.random()*100+'vh';
+  el.style.fontSize=(14+Math.random()*20)+'px';
+  el.style.animationDelay=(Math.random()*4)+'s';
+  floatLayer.appendChild(el);
+}
+
+function burstConfetti(n=40){
+  const layer=document.getElementById('confettiLayer');
+  const colors=['#FFC93C','#FF8C42','#06AED5','#FFD6E8'];
+  for(let i=0;i<n;i++){
+    const c=document.createElement('div');
+    c.className='confetto';
+    c.style.left=Math.random()*100+'vw';
+    c.style.width=c.style.height=(6+Math.random()*6)+'px';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.borderRadius= Math.random()>.5 ? '50%':'2px';
+    c.style.setProperty('--dx',(Math.random()*160-80)+'px');
+    c.style.setProperty('--rot',(Math.random()*720)+'deg');
+    c.style.animation=`confFall ${2+Math.random()*1.5}s ease-in forwards`;
+    layer.appendChild(c);
+    setTimeout(()=>c.remove(),3600);
+  }
+}
+
+/* ---------------- Flow ---------------- */
+const audio=document.getElementById('audio');
+const player=document.getElementById('player');
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  document.getElementById('intro').style.display='none';
+  const c3=document.getElementById('count3');
+  c3.style.display='flex';
+  let n=3;
+  const numEl=document.getElementById('countNum');
+  numEl.textContent=n;
+  const timer=setInterval(()=>{
+    n--;
+    if(n<=0){
+      clearInterval(timer);
+      c3.style.display='none';
+      const reveal=document.getElementById('reveal');
+      reveal.style.display='flex';
+      burstConfetti(60);
+      setTimeout(()=>{
+        document.getElementById('revealMsg').style.display='none';
+        document.getElementById('revealMsg2').style.display='block';
+        document.getElementById('toCards').style.display='inline-block';
+      },2200);
+    } else {
+      numEl.textContent=n;
+    }
+  },800);
+
+  if(audio.src){ audio.play().catch(()=>{}); }
+  player.classList.add('show');
+});
+
+document.getElementById('toCards').addEventListener('click', ()=>{
+  document.getElementById('cards').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------------- Cards ---------------- */
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    let r=card.querySelector('.result');
+    if(!r){
+      r=document.createElement('span');
+      r.className='result';
+      card.appendChild(r);
+    }
+    r.textContent = card.dataset.result;
+    burstConfetti(18);
+  });
+});
+
+/* ---------------- Garden ---------------- */
+const g2Grid=document.getElementById('g2Grid');
+for(let i=0;i<14;i++){
+  const f=document.createElement('div');
+  f.className='g2-flower';
+  f.textContent='🌼';
+  f.style.transitionDelay=(i*0.05)+'s';
+  g2Grid.appendChild(f);
+}
+const io2=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.g2-flower').forEach(f=>f.classList.add('bloom'));
+    }
+  });
+},{threshold:.3});
+io2.observe(document.getElementById('garden2'));
+
+/* ---------------- Typewriter letter ---------------- */
+const letterMsg = "Puede que no tenga las palabras más bonitas del mundo, pero quería regalarte un detalle para recordarte que eres una persona especial. Gracias por las risas, las conversaciones y los buenos momentos. Que nunca te falten motivos para sonreír y que siempre tengas flores amarillas en tu camino. 🌼💛";
+let typed=false;
+const io3=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && !typed){
+      typed=true;
+      const target=document.getElementById('letterText');
+      let i=0;
+      const speed=22;
+      function type(){
+        if(i<=letterMsg.length){
+          target.textContent=letterMsg.slice(0,i);
+          i++;
+          setTimeout(type,speed);
+        }
+      }
+      type();
+    }
+  });
+},{threshold:.4});
+io3.observe(document.getElementById('letter2'));
+
+/* ---------------- Music player ---------------- */
+document.getElementById('audioFile').addEventListener('change', (e)=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  audio.src=URL.createObjectURL(file);
+  document.getElementById('trackLabel').textContent=file.name;
+  audio.play().then(()=>{ document.getElementById('playPause').textContent='⏸'; }).catch(()=>{});
+});
+document.getElementById('playPause').addEventListener('click', ()=>{
+  if(!audio.src) return;
+  if(audio.paused){ audio.play(); document.getElementById('playPause').textContent='⏸'; }
+  else{ audio.pause(); document.getElementById('playPause').textContent='▶'; }
+});
+document.getElementById('volume').addEventListener('input', e=>{ audio.volume=e.target.value; });
+audio.volume=0.6;
+</script>
+</body>
+</html>
